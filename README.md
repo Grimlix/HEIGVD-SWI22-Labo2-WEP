@@ -38,6 +38,31 @@ Dans cette partie, vous allez récupérer le script Python [manual-decryption.py
 
 - Analyser le fonctionnement du script
 
+1. Déclaration de la clé WEP de 40 bits
+   1. `key= b'\xaa\xaa\xaa\xaa\xaa'`
+2. Lecture du message chiffré depuis le fichier .cap
+   1. `arp = rdpcap('arp.cap')[0]`
+3. Concaténation de la clé WEP (40 bits) et du vecteur d'initialisation (24 bits) pour former le clé RC4 de 64 bits
+   1. `seed = arp.iv+key`
+4. Récupération de l'ICV chiffré depuis le message chiffré
+   1. `icv_encrypted='{:x}'.format(arp.icv)`
+5. Composition du texte chiffré composé du texte chiffré suivi de l'ICV chiffré
+   1. `message_encrypted=arp.wepdata+bytes.fromhex(icv_encrypted)`
+6. Déchiffrement du texte avec RC4
+   1. `cipher = RC4(seed, streaming=False)`
+   2. `cleartext=cipher.crypt(message_encrypted)`
+7. Récupération de l'ICV et du texte clair. L'ICV correspond au 4 octets de poids faibles du texte clair
+   1. `icv_enclair=cleartext[-4:]`
+   2. `icv_enclair = icv_enclair`
+   3. `icv_numerique=struct.unpack('!L', icv_enclair)`
+   4. `text_enclair=cleartext[:-4]`
+8. Affichage
+   1. `print ('Text: ' + text_enclair.hex())`
+   2. `print ('icv:  ' + icv_enclair.hex())`
+   3. `print ('icv(num): ' + str(icv_numerique))`
+
+
+
 ### 2. Chiffrement manuel de WEP
 
 Utilisant le script [manual-decryption.py](files/manual-decryption.py) comme guide, créer un nouveau script `manual-encryption.py` capable de chiffrer un message, l’enregistrer dans un fichier pcap et l’envoyer.
