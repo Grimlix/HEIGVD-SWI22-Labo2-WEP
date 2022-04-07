@@ -34,6 +34,8 @@ Dans cette partie, vous allez récupérer le script Python [manual-decryption.py
    
 - Comparer la sortie du script avec la capture text déchiffrée par Wireshark
    
+![](.README_images/67b30d10.png)
+
 - Analyser le fonctionnement du script
 
 ### 2. Chiffrement manuel de WEP
