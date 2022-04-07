@@ -26,7 +26,7 @@ seed = arp.iv+key
 icv_encrypted='{:x}'.format(arp.icv)
 
 # text chiffré y-compris l'icv
-message_encrypted=arp.wepdata+bytes.fromhex(icv_encrypted)
+message_encrypted=arp.wepdata + bytes.fromhex(icv_encrypted)
 
 # déchiffrement rc4
 cipher = RC4(seed, streaming=False)
