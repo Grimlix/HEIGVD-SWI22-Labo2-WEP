@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from Crypto.Random import get_random_bytes
 
 """ Manually decrypt a wep message given the WEP key"""
 
@@ -14,38 +13,36 @@ __status__ 		= "Prototype"
 from scapy.all import *
 import binascii
 from rc4 import RC4
+from scapy.all import *
+from scapy.layers.dot11 import RadioTap
+
 #Cle wep AA:AA:AA:AA:AA
 key= b'\xaa\xaa\xaa\xaa\xaa'
+message = b'\x00' * 10
+iv = b'\x00' * 3
 
-message = b'Hello'
-iv = b'bit'
-
-print(iv)
+# ON récupère le fichier pcap d'avant pour le copier et juste changer ses valeurs
+arp = rdpcap('arp.cap')[0]  
 
 # rc4 seed est composé de IV+clé
 seed = iv+key
-
-# calcul icv
-icv = binascii.crc32(message)
-
 # creation du cipher
 cipher = RC4(seed, streaming=False)
-
+# calcul icv
+icv = binascii.crc32(message)
 # Encrypt
-ciphertext = cipher.crypt(message + icv.to_bytes(4, byteorder='little'))
+ciphertext = cipher.crypt(message + struct.pack('I', icv))
 
-
-arp = rdpcap('arp.cap')[0]  
-
-icv_encrypted=ciphertext[-4:]
-ciphertext_encrypted = ciphertext[:-4]
+icv_encrypted = struct.unpack('!L', ciphertext[-4:])[0]
+ciphertext = ciphertext[:-4]
 
 arp.iv = iv
-arp.wepdata = ciphertext_encrypted
-arp.icv = int.from_bytes(icv_encrypted, "little")
+arp.wepdata = ciphertext
+arp.icv = icv_encrypted
 
+arp[RadioTap].len = None
 
-wrpcap('filtered.pcap', arp, append=True)
+wrpcap('filtered.pcap', arp)
 
 
 
