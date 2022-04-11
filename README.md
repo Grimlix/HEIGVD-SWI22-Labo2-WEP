@@ -97,15 +97,36 @@ Dans cette partie, vous allez enrichir votre script développé dans la partie p
 - Pour un test encore plus intéressant (optionnel), vous pouvez utiliser un AP (disponible sur demande) et envoyer vos fragments. Pour que l’AP accepte vous données injectées, il faudra faire une « fake authentication » que vous pouvez faire avec `aireplay-ng`
 - Si l’AP accepte vos fragments, il les recomposera et les retransmettra en une seule trame non-fragmentée !
 
+### Fragments créés
+
+Nous avons décidé de chiffrer le message `Je suis le message chiffre1 Je suis le message chiffre2 Je suis le message chiffre3`.
+Voici les trois fragments sur Wireshark pour montrer le fonctionnement :
+
+Fragment 0, on voit bien le champ `More Fragments` à 1 et le `Fragment number` à 0 :
+
+![](.README_images/8a66d73b.png)
+
+Fragment 1, on voit bien le champ `More Fragments` à 1 et le `Fragment number` à 1 :
+
+![](.README_images/30e2e14c.png)
+
+Fragment 2, on voit bien le champ `More Fragments` à 0 et le `Fragment number` à 2 :
+
+![](.README_images/f61a5898.png)
+
+Et finalement la sortie de l'assemblage des 3 fragments :
+
+![](.README_images/297c706e.png)
+
 ## Livrables
 
 Un fork du repo original . Puis, un Pull Request contenant :
 
--	Script de chiffrement WEP **abondamment commenté/documenté**
-  - Fichier pcap généré par votre script contenant la trame chiffrée
+-	Script de chiffrement WEP **abondamment commenté/documenté** - `manual-encryption.py`
+  - Fichier pcap généré par votre script contenant la trame chiffrée - `trame_chiffree.pcap`
   - Capture d’écran de votre trame importée et déchiffré par Wireshark
--	Script de fragmentation **abondamment commenté/documenté**
-  - Fichier pcap généré par votre script contenant les fragments
+-	Script de fragmentation **abondamment commenté/documenté** - `fragmentation.py`
+  - Fichier pcap généré par votre script contenant les fragments - `fragments.pcap`
   - Capture d’écran de vos trames importées et déchiffrés par Wireshark 
 
 -	Envoyer le hash du commit et votre username GitHub par email au professeur et à l'assistant
